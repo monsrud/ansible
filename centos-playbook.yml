@@ -1,0 +1,14 @@
+---
+- name: Centos Playbook
+  hosts: centos
+  user: root
+  become: true
+  tasks:
+   - name: stuff
+     yum:
+      name: epel-release
+      state: latest
+
+
+
+
