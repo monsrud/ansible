@@ -1,0 +1,8 @@
+---
+- hosts: ubuntu
+  remote_user: root
+
+  tasks:
+  - yum:
+    name: update
+    state: latest
