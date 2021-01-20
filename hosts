@@ -1,6 +1,20 @@
 
-ansible_python_interpreter=/usr/bin/python2.7
 [centos]
-10.10.10.142
+10.10.10.164
+
+
+[centos:vars]
+ansible_python_interpreter=/usr/bin/python3
+
 [ubuntu]
 10.10.10.138
+
+[ubuntu:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[mint]
+10.10.10.131
+10.10.10.145
+
+[mint:vars]
+ansible_python_interpreter=/usr/bin/python3

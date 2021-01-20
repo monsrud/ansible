@@ -1,8 +1,20 @@
 ---
 - hosts: ubuntu
   remote_user: root
+  become: true
+  become_user: root
 
   tasks:
-  - yum:
-    name: update
-    state: latest
+  - name: Update and Upgrade
+    apt:
+      update_cache: yes
+      cache_valid_time: 86400
+      upgrade: yes
+
+  - name: google repo
+    apt_repository:
+      state: present
+      repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+      filename: google-chrome
+      validate_certs: false
+
