@@ -9,6 +9,14 @@
 
   tasks:
 
+
+    #- name: Enable snap
+    #  shell: rm /etc/apt/preferences.d/nosnap.pref 
+
+    - name: Disable the firewall
+      ufw:
+        state: disabled 
+
     - name: Add google key
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
@@ -126,6 +134,7 @@
         - samba-common
         - samba-libs
         - sane-utils
+        - snapd
         - snmp
         - snmpd
         - snmp-mibs-downloader
@@ -157,7 +166,6 @@
           - intellij-idea-community 
 
 
+# TODO:
 # wget https://zoom.us/client/latest/zoom_amd64.deb
 # sudo apt install ./zoom_amd64.deb
-# disable firewall
-# disable se linux

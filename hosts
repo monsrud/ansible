@@ -1,9 +1,14 @@
 
-[centos]
-10.10.10.164
+[centos7]
+10.10.10.131
 
+[centos7:vars]
+ansible_python_interpreter=/usr/bin/python
 
-[centos:vars]
+[centos8]
+10.10.10.11
+
+[centos8:vars]
 ansible_python_interpreter=/usr/bin/python3
 
 [ubuntu]
@@ -13,8 +18,7 @@ ansible_python_interpreter=/usr/bin/python3
 ansible_python_interpreter=/usr/bin/python3
 
 [mint]
-10.10.10.131
-10.10.10.145
+10.10.10.133
 
 [mint:vars]
 ansible_python_interpreter=/usr/bin/python3
