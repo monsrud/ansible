@@ -1,0 +1,48 @@
+# Install Foreman on Centos 7
+
+---
+- hosts: centos7
+  remote_user: root
+  become: true
+  become_user: root
+
+  tasks:
+
+  - name: Update /etc/hosts 
+    shell: echo "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} foreman.local foreman" >> /etc/hosts
+
+  - name: Set the hostname
+    hostname:
+      name: foreman 
+
+  - name: install updates 
+    yum:
+      name: "*"
+      state: latest
+
+  - firewalld:
+      state: disabled
+
+  - name: Download foreman-release 
+    get_url:
+      url: https://yum.theforeman.org/releases/1.23/el7/x86_64/foreman-release.rpm
+      dest: /tmp/foreman-release.rpm
+
+  - name: Download puppet-release 
+    get_url:
+      url: https://yum.puppet.com/puppet6-release-el-7.noarch.rpm 
+      dest: /tmp/puppet-release.rpm
+
+  - name: Install a list of packages
+    yum:
+      name:
+        - epel-release
+        - chrony
+        - kexec-tools
+        - python3
+      state: present
+
+  - name: Run installer 
+    shell: foreman-installer 
+
+
