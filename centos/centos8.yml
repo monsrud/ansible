@@ -1,0 +1,83 @@
+# standard yml for building a lab server
+
+---
+- hosts: centos8
+  remote_user: root
+  become: true
+  become_user: root
+  vars:
+    NTP_SERVER_IP: 132.163.96.5 
+
+  tasks:
+
+  - name: install updates using dnf
+    dnf:
+      name: "*"
+      state: latest
+
+  - name: Disable selinux 
+    selinux:
+      state: disabled 
+
+  - name: Disable firewalld
+    service: 
+      name: firewalld
+      enabled: no
+
+  - name: Install ntp if this is a physical host
+    when: ansible_virtualization_role == "host"
+    yum:
+      name: ntp
+      state: latest
+
+  - name: create ntp conf
+    when: ansible_virtualization_role == "host"
+    local_action: copy content="server {{ NTP_SERVER_IP }} driftfile /var/lib/ntp/drift" dest="/tmp/testfile"
+
+  - name: copy ntp conf to server
+    when: ansible_virtualization_role == "host"
+    copy:
+      src: /tmp/testfile
+      dest: /etc/ntp.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Install open vm tools if this is a virtual machine
+    when: ansible_virtualization_role == "guest"
+    yum:
+      name: open-vm-tools
+      state: latest
+
+
+
+
+
+
+#  - name: Install common packages
+#    yum:
+#      name: "{{ packages }}"
+#    vars:
+#      packages:
+#      - cifs-utils
+#      - curl
+#      - device-mapper-multipath
+#      - dosfstools
+#      - iotop
+#      - ipmitool
+#      - iproute
+#      - iprutils
+#      - iputils
+#      - iscsi-initiator-utils
+#      - minicom
+#      - net-tools
+#      - nfs-utils
+#      - parted
+#      - rsync
+#      - samba-client
+#      - sg3_utils
+#      - util-linux
+#      - wget
+#      - yum-utils
+
+
