@@ -1,5 +1,6 @@
 # Ansible
 
+Taking Ansible for a test drive for home and lab use.
 
 
 Training and Reference Materials:
