@@ -1,6 +1,9 @@
 
+NTP_SERVER_IP=132.163.96.5
+
+
 [centos7]
-10.10.10.131
+10.10.10.36
 
 [centos7:vars]
 ansible_python_interpreter=/usr/bin/python
