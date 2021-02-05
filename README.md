@@ -19,3 +19,8 @@ Training and Reference Materials:
 * [AWX (Tower)](https://www.youtube.com/watch?v=iKmY4jEiy_A)
 
 * [Install AWX](https://www.howtoforge.com/tutorial/centos-ansible-awx-installation/)
+
+
+TODO:
+
+-  update NetworkManager.conf to not own /etc/resolv.conf, write dns servers to /etc/resolv.conf

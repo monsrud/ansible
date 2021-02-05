@@ -45,39 +45,24 @@
 
   - name: Install open vm tools if this is a virtual machine
     when: ansible_virtualization_role == "guest"
-    yum:
+    dnf:
       name: open-vm-tools
       state: latest
 
+  - name: Install common packages
+    dnf:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - bind-utils
+      - cifs-utils
+      - curl
+      - epel-release
+      - net-tools
+      - nfs-utils
+      - rsync
+      - samba-client
+      - wget
 
-
-
-
-
-#  - name: Install common packages
-#    yum:
-#      name: "{{ packages }}"
-#    vars:
-#      packages:
-#      - cifs-utils
-#      - curl
-#      - device-mapper-multipath
-#      - dosfstools
-#      - iotop
-#      - ipmitool
-#      - iproute
-#      - iprutils
-#      - iputils
-#      - iscsi-initiator-utils
-#      - minicom
-#      - net-tools
-#      - nfs-utils
-#      - parted
-#      - rsync
-#      - samba-client
-#      - sg3_utils
-#      - util-linux
-#      - wget
-#      - yum-utils
 
 
