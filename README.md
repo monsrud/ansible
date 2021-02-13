@@ -24,4 +24,6 @@ Training and Reference Materials:
 
 TODO:
 
--  update NetworkManager.conf to not own /etc/resolv.conf, write dns servers to /etc/resolv.conf
+- update NetworkManager.conf to not own /etc/resolv.conf, write dns servers to /etc/resolv.conf
+
+- add functionality to disable ipv6

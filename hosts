@@ -15,10 +15,10 @@ ansible_python_interpreter=/usr/bin/python
 ansible_python_interpreter=/usr/bin/python3
 
 [ubuntu]
-10.10.10.138
+10.10.10.46
 
 [ubuntu:vars]
-ansible_python_interpreter=/usr/bin/python3
+ansible_python_interpreter=/usr/bin/python2.7
 
 [mint]
 10.10.10.133
