@@ -5,16 +5,33 @@
   become_user: root
 
   tasks:
-  - name: Update and Upgrade
+
+  - name: Update 
     apt:
+      name: "*" 
       update_cache: yes
-      cache_valid_time: 86400
-      upgrade: yes
+      state: latest
 
-  - name: google repo
-    apt_repository:
-      state: present
-      repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-      filename: google-chrome
-      validate_certs: false
+  - name: Install open vm tools if this is a virtual machine
+    when: ansible_virtualization_role == "guest"
+    apt:
+      name: open-vm-tools
+      state: latest
 
+  - name: Disable the firewall
+    ufw:
+      state: disabled
+
+  - name: Disable IPv6 with sysctl
+    sysctl: name={{ item }} value=1 state=present reload=yes
+    with_items:
+      - net.ipv6.conf.all.disable_ipv6
+      - net.ipv6.conf.default.disable_ipv6
+      - net.ipv6.conf.lo.disable_ipv6
+
+  - name: Disable IPv6 autoconf with sysctl
+    sysctl: name={{ item }} value=0 state=present reload=yes
+    with_items:
+      - net.ipv6.conf.all.autoconf 
+      - net.ipv6.conf.default.autoconf 
+      - net.ipv6.conf.lo.autoconf
