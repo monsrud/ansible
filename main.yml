@@ -1,0 +1,97 @@
+---
+#
+# Common settings for test lab hosts
+#
+- hosts: '*'
+  remote_user: root
+  become: true
+  become_user: root
+
+  tasks:
+
+  - name: Disable IPv6 with sysctl
+    sysctl: name={{ item }} value=1 state=present reload=yes
+    with_items:
+      - net.ipv6.conf.all.disable_ipv6
+      - net.ipv6.conf.default.disable_ipv6
+      - net.ipv6.conf.lo.disable_ipv6
+    when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'
+
+  - name: Disable IPv6 autoconf with sysctl
+    sysctl: name={{ item }} value=0 state=present reload=yes
+    with_items:
+      - net.ipv6.conf.all.autoconf
+      - net.ipv6.conf.default.autoconf
+      - net.ipv6.conf.lo.autoconf
+    when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'RedHat'
+
+  - name: Check for selinux config
+    stat: 
+      path: /etc/selinux/config
+    register: config_file 
+
+  - name: Disable selinux
+    selinux:
+      state: disabled
+    when: config_file.stat.exists
+
+  - name: Add the user 'lab' 
+    ansible.builtin.user:
+      name: lab
+      password: $6$iA5foPioS79MFT9G$AsO6rSyOkEzlh.daS1wQiO8EKojkq8/KFSGh17GBDZ0JMLxcKUmps8g5X9PkSkXkzHhPelc4q4qVgE3y0HBgX/
+      shell: /bin/bash
+      #groups: admins,developers
+      #append: yes
+
+  # maybe put lab into specific groups based on os type
+
+  - name: Disable the firewall
+    ufw:
+      state: disabled
+    when: ansible_facts['os_family'] == 'Debian'
+
+  - name: Check for firewalld
+    stat: 
+      path: /etc/systemd/system/multi-user.target.wants/firewalld.service
+    register: firewalld_service 
+    when: ansible_facts['os_family'] == 'RedHat'
+
+  - name: Disable firewalld
+    service:
+      name: firewalld
+      enabled: no
+    when: ansible_facts['os_family'] == 'RedHat' and firewalld_service.stat.exists
+
+- name: Include CentOS Packages
+  import_playbook: centos.yml
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Include Ubuntu Packages
+  import_playbook: ubuntu.yml
+  when: ansible_facts['os_family'] == 'Debian'
+
+
+#  - name: Print all available facts
+#    ansible.builtin.debug:
+#      var: ansible_facts
+#  - debug:
+#      msg: "OS FAMILY:  {{ os_family }} DISTRIBUTION:  {{ distribution }}  DISTRIBUTION VERSION: {{ distribution_major_version }}"
+#  - Check if firewalld exists
+#
+#  - name: Disable ufw
+#    ufw:
+#      state: disabled
+#    when: ansible_facts['os_family'] == 'Debian'
+#
+#  - name: Disable firewalld
+#    service:
+#      name: firewalld
+#      enabled: no
+#    when: ansible_facts['os_family'] == 'RedHat'
+#"distribution_major_version": "20",
+#"os_family": "Debian", RedHat
+#"distribution": "Ubuntu" CentOS
+#when: ansible_facts['os_family'] == 'Debian'
+
+
+
