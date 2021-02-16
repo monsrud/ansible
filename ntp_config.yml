@@ -1,0 +1,22 @@
+  vars:
+    NTP_SERVER_IP: 132.163.96.5
+
+  - name: Install ntp if this is a physical host
+    when: ansible_virtualization_role == "host"
+    yum:
+      name: ntp
+      state: latest
+
+  - name: create ntp conf
+    when: ansible_virtualization_role == "host"
+    local_action: copy content="server {{ NTP_SERVER_IP }} driftfile /var/lib/ntp/drift" dest="/tmp/testfile"
+
+  - name: copy ntp conf to server
+    when: ansible_virtualization_role == "host"
+    copy:
+      src: /tmp/testfile
+      dest: /etc/ntp.conf
+      owner: root
+      group: root
+      mode: 0644
+

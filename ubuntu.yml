@@ -1,0 +1,24 @@
+---
+- hosts: 'ubuntu_hosts,debian_hosts'
+  remote_user: root
+  become: true
+  become_user: root
+
+  tasks:
+
+  - name: Run Apt Update
+    apt:
+      name: "*"
+      update_cache: yes
+      state: latest
+
+  - name: Install open vm tools if this is a virtual machine
+    when: ansible_virtualization_role == "guest"
+    apt:
+      name: open-vm-tools
+      state: latest
+
+  - name: Install Common Packages
+    apt:
+      pkg:
+      - net-tools
