@@ -1,6 +1,6 @@
 ---
 #
-# Common settings for test lab hosts
+# Common settings for Centos/Ubuntu test lab hosts
 #
 - hosts: '*'
   remote_user: root
@@ -40,58 +40,21 @@
       name: lab
       password: $6$iA5foPioS79MFT9G$AsO6rSyOkEzlh.daS1wQiO8EKojkq8/KFSGh17GBDZ0JMLxcKUmps8g5X9PkSkXkzHhPelc4q4qVgE3y0HBgX/
       shell: /bin/bash
-      #groups: admins,developers
-      #append: yes
+      #      groups: wheel, admin, sudo
+      #      append: yes
+      # maybe put lab into specific groups based on os type
+      # on centos, put them in wheel
+      # on ubuntu put them in admin or sudo
 
-  # maybe put lab into specific groups based on os type
-
-  - name: Disable the firewall
-    ufw:
-      state: disabled
-    when: ansible_facts['os_family'] == 'Debian'
-
-  - name: Check for firewalld
-    stat: 
-      path: /etc/systemd/system/multi-user.target.wants/firewalld.service
-    register: firewalld_service 
+  - name: Include CentOS Packages/Tasks
+    include_tasks: centos_tasks.yml
     when: ansible_facts['os_family'] == 'RedHat'
 
-  - name: Disable firewalld
-    service:
-      name: firewalld
-      enabled: no
-    when: ansible_facts['os_family'] == 'RedHat' and firewalld_service.stat.exists
-
-- name: Include CentOS Packages
-  import_playbook: centos.yml
-  when: ansible_facts['os_family'] == 'RedHat'
-
-- name: Include Ubuntu Packages
-  import_playbook: ubuntu.yml
-  when: ansible_facts['os_family'] == 'Debian'
+  - name: Include Ubuntu Packages/Tasks
+    include_tasks: ubuntu_tasks.yml
+    when: ansible_facts['os_family'] == 'Debian'
 
 
-#  - name: Print all available facts
-#    ansible.builtin.debug:
-#      var: ansible_facts
-#  - debug:
-#      msg: "OS FAMILY:  {{ os_family }} DISTRIBUTION:  {{ distribution }}  DISTRIBUTION VERSION: {{ distribution_major_version }}"
-#  - Check if firewalld exists
-#
-#  - name: Disable ufw
-#    ufw:
-#      state: disabled
-#    when: ansible_facts['os_family'] == 'Debian'
-#
-#  - name: Disable firewalld
-#    service:
-#      name: firewalld
-#      enabled: no
-#    when: ansible_facts['os_family'] == 'RedHat'
-#"distribution_major_version": "20",
-#"os_family": "Debian", RedHat
-#"distribution": "Ubuntu" CentOS
-#when: ansible_facts['os_family'] == 'Debian'
 
 
 

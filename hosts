@@ -5,15 +5,8 @@
 10.10.10.67
 
 [centos7]
-10.10.10.74
 10.10.10.75
 
-[ubuntu_hosts]
-10.10.10.67
-
-[centos_hosts]
-10.10.10.74
-10.10.10.75
 
 #[centos7:vars]
 #ansible_python_interpreter=/usr/bin/python
