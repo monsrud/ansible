@@ -1,5 +1,11 @@
 # These are Centos  Packages and Centos specific tasks
 
+  - name: Add groups for "{{ lab_username }}" user
+    ansible.builtin.user:
+      name: "{{ lab_username }}"
+      groups: wheel 
+      append: yes
+
   - name: Check for firewalld
     stat:
       path: /etc/systemd/system/multi-user.target.wants/firewalld.service
