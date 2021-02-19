@@ -35,16 +35,11 @@
       state: disabled
     when: config_file.stat.exists
 
-  - name: Add the user 'lab' 
+  - name: Add the user "{{ lab_username }}" 
     ansible.builtin.user:
-      name: lab
-      password: $6$iA5foPioS79MFT9G$AsO6rSyOkEzlh.daS1wQiO8EKojkq8/KFSGh17GBDZ0JMLxcKUmps8g5X9PkSkXkzHhPelc4q4qVgE3y0HBgX/
+      name: "{{ lab_username }}"
+      password: "{{ lab_password }}" 
       shell: /bin/bash
-      #      groups: wheel, admin, sudo
-      #      append: yes
-      # maybe put lab into specific groups based on os type
-      # on centos, put them in wheel
-      # on ubuntu put them in admin or sudo
 
   - name: Include CentOS Packages/Tasks
     include_tasks: centos_tasks.yml
