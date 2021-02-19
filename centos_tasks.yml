@@ -1,10 +1,15 @@
----
-- hosts: 'centos_hosts,redhat_hosts'
-  remote_user: root
-  become: true
-  become_user: root
+# These are Centos  Packages and Centos specific tasks
 
-  tasks:
+  - name: Check for firewalld
+    stat:
+      path: /etc/systemd/system/multi-user.target.wants/firewalld.service
+    register: firewalld_service
+
+  - name: Disable firewalld
+    service:
+      name: firewalld
+      enabled: no
+    when: firewalld_service.stat.exists
 
   - name: Run Yum update
     yum:
