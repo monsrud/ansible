@@ -3,6 +3,9 @@
 Taking Ansible for a test drive for home and lab use.
 
 
+Use the environment variable ANSIBLE_VAULT_PASSWORD_FILE to point to a password file.
+export ANSIBLE_VAULT_PASSWORD_FILE=/home/monsrud/.ansible_vault_password
+
 Training and Reference Materials:
 
 * [Introduction to Ansible](https://www.linkedin.com/learning/learning-ansible-2/an-introduction-to-ansible)
