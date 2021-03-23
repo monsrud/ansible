@@ -22,8 +22,4 @@ Training and Reference Materials:
 * [Install AWX](https://www.howtoforge.com/tutorial/centos-ansible-awx-installation/)
 
 
-TODO:
 
-- update NetworkManager.conf to not own /etc/resolv.conf, write dns servers to /etc/resolv.conf
-
-- add functionality to disable ipv6
