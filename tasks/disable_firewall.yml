@@ -1,0 +1,19 @@
+---
+
+  - name: Disable the firewall
+    ufw:
+      state: disabled
+    when: ansible_facts['os_family'] == 'Debian'
+
+  - name: Check for firewalld
+    stat:
+      path: /etc/systemd/system/multi-user.target.wants/firewalld.service
+    register: firewalld_service
+
+  - name: Disable firewalld
+    service:
+      name: firewalld
+      enabled: no
+    when: firewalld_service.stat.exists and ansible_facts['os_family'] == 'RedHat'
+
+

@@ -1,0 +1,15 @@
+---
+  - name: Install Common Centos/Redhat Packages
+    yum:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - bind-utils
+      - cifs-utils
+      - curl
+      - epel-release
+      - net-tools
+      - nfs-utils
+      - rsync
+      - samba-client
+      - wget

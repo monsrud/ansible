@@ -1,0 +1,15 @@
+  - name: Run Apt Update
+    apt:
+      name: "*"
+      force_apt_get: yes
+      update_cache: yes
+      state: latest
+    when: ansible_facts['os_family'] == 'Debian'
+
+  - name: Run Yum update
+    yum:
+      name: "*"
+      update_cache: yes
+      state: latest
+    when: ansible_facts['os_family'] == 'Redhat'
+

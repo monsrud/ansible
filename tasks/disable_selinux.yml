@@ -1,0 +1,13 @@
+---
+  - name: Check for selinux config
+    stat:
+      path: /etc/selinux/config
+    register: config_file
+
+  - name: Disable selinux
+    selinux:
+      state: disabled
+    when: config_file.stat.exists
+
+
+

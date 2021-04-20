@@ -1,0 +1,9 @@
+---
+  - name: Install Common Ubuntu/Debian Packages
+    apt:
+      pkg:
+      - net-tools
+      - avahi-utils
+      - avahi-daemon
+      - nfs-common
+

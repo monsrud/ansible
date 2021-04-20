@@ -1,0 +1,7 @@
+---
+  - name: Install open vm tools if this is a virtual machine
+    when: ansible_virtualization_role == "guest"
+    package:
+      name: open-vm-tools
+      state: latest
+

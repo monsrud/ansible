@@ -1,0 +1,26 @@
+---
+
+
+
+
+  - name: Add the user "{{ lab_username }}"
+    ansible.builtin.user:
+      name: "{{ lab_username }}"
+      password: "{{ lab_password }}"
+      shell: /bin/bash
+
+  - name: Add groups for "{{ lab_username }}" user
+    ansible.builtin.user:
+      name: "{{ lab_username }}"
+      groups: wheel 
+      append: yes
+    when: ansible_facts['os_family'] == 'RedHat'
+
+  - name: Add user and groups for "{{ lab_username }}" user
+    user:
+      name: lab
+      groups: sudo  
+      password: "{{ lab_password }}" 
+      append: yes
+    when: ansible_facts['os_family'] == 'Debian'
+

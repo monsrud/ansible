@@ -1,10 +1,15 @@
-  vars:
-    NTP_SERVER_IP: 132.163.96.5
+---
 
   - name: Install ntp if this is a physical host
-    when: ansible_virtualization_role == "host"
+    when: ansible_virtualization_role == "host" and ansible_facts['os_family'] == 'RedHat' 
     yum:
-      name: ntp
+      name: chrony
+      state: latest
+
+  - name: Install ntp if this is a physical host
+    when: ansible_virtualization_role == "host" and ansible_facts['os_family'] == 'Debian' 
+    yum:
+      name: openntpd
       state: latest
 
   - name: create ntp conf

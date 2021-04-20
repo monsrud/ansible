@@ -1,2 +1,0 @@
-lab_username: lab
-lab_password: "{{ vault_password }}"
