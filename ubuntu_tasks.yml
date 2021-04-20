@@ -1,5 +1,3 @@
-
-
 ---
 - hosts: ubuntu18:ubuntu20 
   become: yes
@@ -22,6 +20,14 @@
     user:
       name: root 
       password: "{{ root_user_password }}"
+
+# These are Ubuntu packages and Ubuntu specific tasks
+
+  - name: Add groups for the "{{  lab_username }}" user
+    ansible.builtin.user:
+      name: "{{ lab_username }}"
+      groups: admin, sudo  
+      append: yes
 
   - name: Disable the firewall
     ufw:

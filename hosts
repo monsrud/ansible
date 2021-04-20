@@ -1,32 +1,9 @@
 
-#NTP_SERVER_IP=132.163.96.5
-
-[ubuntu20]
-
 
 [ubuntu18]
-10.80.0.85
 
 
-#[centos7]
-#10.10.10.75
+[centos7]
 
 
-#[centos7:vars]
-#ansible_python_interpreter=/usr/bin/python
 
-#[centos8]
-#10.10.10.34
-
-#[centos8:vars]
-#ansible_python_interpreter=/usr/bin/python3
-
-
-#[ubuntu20:vars]
-#ansible_python_interpreter=/usr/bin/python3
-
-#[mint]
-#10.10.10.133
-
-#[mint:vars]
-#ansible_python_interpreter=/usr/bin/python3
