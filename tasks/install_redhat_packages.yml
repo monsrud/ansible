@@ -4,12 +4,23 @@
       name: "{{ packages }}"
     vars:
       packages:
+      - epel-release
+      - arp-scan
       - bind-utils
       - cifs-utils
       - curl
-      - epel-release
+      - fping
+      - iperf3
+      - iputils
       - net-tools
       - nfs-utils
+      - nmap
       - rsync
       - samba-client
+      - tcpdump
+      - telnet
+      - tftp
+      - traceroute
       - wget
+      - whois
+      - wireshark

@@ -2,8 +2,24 @@
   - name: Install Common Ubuntu/Debian Packages
     apt:
       pkg:
-      - net-tools
-      - avahi-utils
-      - avahi-daemon
-      - nfs-common
 
+      - arp-scan
+      - avahi-daemon
+      - avahi-utils
+      - curl
+      - fping
+      - iperf3
+      - iputils-arping
+      - iputils-ping
+      - iputils-tracepath
+      - net-tools
+      - nfs-common
+      - nmap
+      - tcpdump
+      - telnet
+      - telnet
+      - tftp
+      - traceroute
+      - tshark
+      - wget
+      - whois

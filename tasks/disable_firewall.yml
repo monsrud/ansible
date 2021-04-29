@@ -1,9 +1,13 @@
 ---
+  - name: Check for ufw 
+    stat:
+      path: /etc/init.d/ufw
+    register: ufw_service
 
   - name: Disable the firewall
     ufw:
       state: disabled
-    when: ansible_facts['os_family'] == 'Debian'
+    when: ufw_service.stat.exists and ansible_facts['os_family'] == 'Debian'
 
   - name: Check for firewalld
     stat:
