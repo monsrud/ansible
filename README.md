@@ -24,4 +24,6 @@ Training and Reference Materials:
 
 * [Install AWX](https://www.howtoforge.com/tutorial/centos-ansible-awx-installation/)
 
+* [Multistage Environments](https://www.digitalocean.com/community/tutorials/how-to-manage-multistage-environments-with-ansible)
+
 
