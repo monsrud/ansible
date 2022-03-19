@@ -1,0 +1,179 @@
+---
+#
+#
+- hosts: '*'
+  remote_user: root
+  become: true
+  become_user: root
+
+  tasks:
+
+  - name: Update and Upgrade
+    apt:
+        update_cache: yes
+        upgrade: dist
+
+  - name: Install Common Ubuntu/Debian Packages
+    apt:
+      pkg:
+      - ca-certificates
+      - pki-ca
+      - ssl-cert
+      - ssmtp
+      - mrtg
+      - mailutils
+      - python3-pip
+      - avahi-utils      
+      - dnsmasq
+
+  - name: remove all cronjobs for user root
+    command: crontab -r -u root
+    ignore_errors: yes
+
+  - name: create utility directory
+    file:
+        path: /root/utility
+        state: directory
+
+  - name: Ssh Server configuration  
+    copy:
+      src: assets/sshd_config
+      dest: /etc/ssh/sshd_config 
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Rsyslog Conf
+    copy:
+      src: assets/rsyslog.conf
+      dest: /etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: ssmtp.conf
+    copy:
+      src: assets/ssmtp.conf
+      dest: /etc/ssmtp/ssmtp.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=
+
+  - replace:
+        path: /etc/ssmtp/ssmtp.conf
+        regexp: 'HOSTNAME_PLACEHOLDER'
+        replace: "{{ansible_hostname}}"
+        backup: no
+
+  - name:  systemd to reread 
+    ansible.builtin.systemd:
+      daemon_reload: yes
+
+  - name: Enable and start rsyslog
+    ansible.builtin.service:
+      name: rsyslog.service
+      state: started
+      enabled: yes
+    
+  - name: Rsyslog Conf
+    copy:
+      src: assets/rsyslog.conf
+      dest: /etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Install sh python package
+    pip:
+      name: sh
+      executable: pip3
+
+  - name: set MAILTO in crontab
+    ansible.builtin.cronvar:
+      name: MAILTO
+      value: MAILTO=user@domain.com
+
+  - name: Restart ssh 
+    ansible.builtin.service:
+      name: ssh.service
+      state: restarted
+
+  - name: Restart rsyslog 
+    ansible.builtin.service:
+      name: rsyslog.service
+      state: restarted
+
+  - name: Restart nginx 
+    ansible.builtin.service:
+      name: nginx
+      state: restarted        
+
+  - name: Remove symlink
+    file:
+      path: "/etc/resolv.conf"
+      state: absent
+
+  - name: Disable and stop systemd.resolved 
+    ansible.builtin.service:
+      name: systemd-resolved.service 
+      state: stopped
+      enabled: no
+
+  - name: Install resolv.conf 
+    copy:
+      src: assets/resolv.conf
+      dest: /etc/resolv.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Install dnsmasq.conf 
+    copy:
+      src: assets/dnsmasq.conf
+      dest: /etc/dnsmasq.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Enable and start dnsmasq
+    ansible.builtin.service:
+      name: dnsmasq.service 
+      state: started
+      enabled: yes
+
+  - name: Enable and start dnsmasq
+    ansible.builtin.service:
+      name: dnsmasq.service 
+      state: restarted
+
+  - name: Make /root/.ssh if it doesn't exist
+    shell: mkdir -p /root/.ssh
+    args:
+      creates: /root/.ssh
+
+  - name: Make /root/.ssh/authorized_keys if it doesn't exist
+    shell: touch /root/.ssh/authorized_keys
+    args:
+      creates: /root/.ssh/authorized_keys      
+
+  - name: Change file ownership, group and permissions of /root/.ssh
+    ansible.builtin.file:
+      path: /root/.ssh
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Change file ownership, group and permissions of /root/.ssh/authorized_keys
+    ansible.builtin.file:
+      path: /root/.ssh/authorized_keys
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Add a key to authorized_keys
+    ansible.builtin.lineinfile:
+      path: /root/.ssh/authorized_keys
+      line: ecdsa-sha2-nistp521 .... == user@domain.com 
+      create: yes
+
+

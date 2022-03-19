@@ -1,0 +1,10 @@
+[Unit]
+Description=Swatchdog Service
+After=network.target
+[Service]
+Type=forking
+User=root
+ExecStart=/usr/bin/swatchdog -c /etc/swatchdog/swatchdog_patterns.cfg -t '/var/log/snmptt/snmptrap.log /var/log/auth.log' --daemon
+[Install]
+WantedBy=multi-user.target
+

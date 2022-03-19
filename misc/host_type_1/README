@@ -1,0 +1,13 @@
+
+This directory contains Ansible configuration files and recipes used for configuration of 
+Edge Controllers installed at customer sites. Using Ansible to automate configuration of
+these devices ensures consistent configuration among sites. The intent is that This
+will be run from kbnoc1 and connect to each site's EC via its VPN.
+
+Edge Controller host IP addresses need to be entered in the hosts file in this directory.
+Ssh keys must be exchanged between hosts for passwordless loging for the root user 
+prior to running run.sh. 
+
+The vagrant_ec directory is used for testing Ansible recipes. It installs a virtualbox
+vm running the edge controller software. These Ansible recipes can be run against that 
+virtual machine to test them.

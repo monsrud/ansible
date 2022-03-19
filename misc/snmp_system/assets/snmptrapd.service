@@ -1,0 +1,13 @@
+[Unit]
+Description=Simple Network Management Protocol (SNMP) Trap Daemon.
+After=network.target
+ConditionPathExists=/etc/snmp/snmptrapd.conf
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/snmptrapd -LOw -f -p /run/snmptrapd.pid
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+

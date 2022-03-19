@@ -1,0 +1,233 @@
+---
+#
+# Common settings snmp monitoring on the poller
+#
+- hosts: '*'
+  remote_user: root
+  become: true
+  become_user: root
+
+  tasks:
+
+  - name: Update and Upgrade
+    apt:
+        update_cache: yes
+        upgrade: dist
+
+  - name: Install Common Ubuntu/Debian Packages
+    apt:
+      pkg:
+      - swatch
+      - snmp
+      - ca-certificates
+      - pki-ca
+      - ssl-cert
+      - snmptrapd
+      - snmptt
+      - ssmtp
+      - mailutils
+      - snmp-mibs-downloader
+      - tftpd-hpa
+      - git
+      - wget
+      - curl
+
+  # Original SNMPv2-PDU had an error in it
+  -name: SNMPv2-PDU
+    copy:
+      src: assets/SNMPv2-PDU
+      dest: /usr/share/snmp/mibs/ietf/SNMPv2-PDU 
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Swatchdog Service  
+    copy:
+      src: assets/swatchdog.service
+      dest: /etc/systemd/system/swatchdog.service
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Snmp Service  
+    copy:
+      src: assets/snmpd.service
+      dest: /etc/systemd/system/snmpd.service
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Snmp Trap Service  
+    copy:
+      src: assets/snmpd.service
+      dest: /etc/systemd/system/snmpd.service
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: create utility directory
+    file:
+        path: /root/utility
+        state: directory
+
+  - name: create tftp directory
+    file:
+        path: /tftp
+        state: directory
+
+  - name: Copy tftp config
+    copy:
+      src: assets/tftpd-hpa
+      dest: /etc/default/tftpd-hpa
+      owner: root
+      group: root
+      mode: u=rwx,g=rx,o=rx     
+
+  - name: swatch.pl
+    copy:
+      src: assets/swatch.pl
+      dest: /root/utility/swatch.pl
+      owner: root
+      group: root
+      mode: u=rwx,g=rx,o=rx
+
+  - name: Snmptrapd Conf
+    copy:
+      src: assets/snmptrapd.conf
+      dest: /etc/snmp/snmptrapd.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Snmp.conf
+    copy:
+      src: assets/snmp.conf
+      dest: /etc/snmp/snmp.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Snmptt.ini
+    copy:
+      src: assets/snmptt.ini
+      dest: /etc/snmp/snmptt.ini
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: ssmtp.conf
+    copy:
+      src: assets/ssmtp.conf
+      dest: /etc/ssmtp/ssmtp.conf
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=
+
+  - replace:
+        path: /etc/ssmtp/ssmtp.conf
+        regexp: 'HOSTNAME_PLACEHOLDER'
+        replace: "{{ansible_hostname}}"
+
+  - name: create swatchdog directory
+    file:
+        path: /etc/swatchdog
+        state: directory
+
+  - name: swatchdog_patterns.cfg 
+    copy:
+      src: assets/swatchdog_patterns.cfg
+      dest: /etc/swatchdog/swatchdog_patterns.cfg
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - replace:
+        path: /etc/swatchdog/swatchdog_patterns.cfg 
+        regexp: 'HOSTNAME_PLACEHOLDER'
+        replace: "{{ansible_hostname}}"
+
+  - name: Just force systemd to reread configs (2.4 and above)
+    ansible.builtin.systemd:
+      daemon_reload: yes
+
+  - name: Enable and Start Swatchdog
+    ansible.builtin.service:
+      name: swatchdog
+      state: started
+      enabled: yes
+
+  - name: Enable and Start Snmpd
+    ansible.builtin.service:
+      name: snmpd
+      state: started
+      enabled: yes
+
+  - name: Enable and Start Snmp Trapd
+    ansible.builtin.service:
+      name: snmptrapd
+      state: started
+      enabled: yes
+
+  - name: Enable and Start Snmptt
+    ansible.builtin.service:
+      name: snmptt
+      state: started
+      enabled: yes
+
+  - name: restart Snmptt
+    ansible.builtin.service:
+      name: snmptt
+      state: restarted
+
+  - name: Make /root/.ssh if it doesn't exist
+    shell: mkdir -p /root/.ssh
+    args:
+      creates: /root/.ssh
+
+  - name: Make /root/.ssh/authorized_keys if it doesn't exist
+    shell: touch /root/.ssh/authorized_keys
+    args:
+      creates: /root/.ssh/authorized_keys      
+
+  - name: Change file ownership, group and permissions of /root/.ssh
+    ansible.builtin.file:
+      path: /root/.ssh
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Change file ownership, group and permissions of /root/.ssh/authorized_keys
+    ansible.builtin.file:
+      path: /root/.ssh/authorized_keys
+      owner: root
+      group: root
+      mode: '0700'
+
+  - name: Add a key to authorized_keys
+    ansible.builtin.lineinfile:
+      path: /root/.ssh/authorized_keys
+      line: ecdsa-sha2-nistp521 ...== root@domain.com
+      create: yes
+
+  - name: Download poller setup.sh
+    shell: wget https://raw.githubusercontent.com/SonarSoftwareInc/poller/master/setup.sh
+    args:
+      creates: /root/setup.sh 
+
+  - name: download setup.sh
+    get_url:
+      url: https://raw.githubusercontent.com/SonarSoftwareInc/poller/master/setup.sh
+      dest: /root/setup.sh
+      mode: 0755
+      force: yes      
+
+  - replace:
+        path: /root/setup.sh
+        regexp: 'reboot now'
+        replace: "# reboot now"
+        backup: no
+
+  - name: Run poller setup.sh
+    shell: ./setup.sh
+    args:
+      creates: /usr/bin/php /usr/share/sonar_poller/src/poller.php
